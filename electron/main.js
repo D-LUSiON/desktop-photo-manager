@@ -114,3 +114,99 @@ ipcMain.on('synchronous-message', (event, arg) => {
     // Synchronous event emmision
     event.returnValue = 'sync pong'
 });
+
+/******************************/
+/******* DATA RETRIEVAL *******/
+/******************************/
+// This one works:
+const exec = require('child_process').exec;
+
+const diskinfo = require('diskinfo');
+
+ipcMain.on('get-drives', (event) => {
+    const getDrives = new Promise((resolve, reject) => {
+        diskinfo.getDrives((err, aDrives) => {
+            aDrives.forEach((drive, i) => {
+                exec(`vol ${drive.mounted}`, (err, stdout, stderr) => {
+                    if (stdout.replace('\r\n', '') === 'The device is not ready.') {
+                        drive.volume_label = '';
+                        drive.serial_number = '';
+                    } else {
+                        const data = stdout.split('\r\n');
+                        data[0] = data[0].replace(` Volume in drive ${drive.mounted.replace(':', '')} is`, '').replace(`Volume in drive ${drive.mounted.replace(':', '')} has no label.`, '');
+                        if (data[0] === ' ') data[0] = '';
+                        data[1] = data[1].replace('Volume Serial Number is', '');
+                        drive.volume_label = data[0];
+                        drive.serial_number = data[1];
+                    }
+                    if (i === aDrives.length - 1)
+                        resolve(aDrives);
+                });
+            });
+        });
+    });
+
+    getDrives.then(drives => {
+        const distinct = [];
+        drives.forEach(drive => {
+
+            const found = !!distinct.filter(d => d.mounted === drive.mounted).length;
+            if (!found)
+                distinct.push(drive);
+        });
+        event.sender.send('get-drives:response', distinct);
+    }).catch((stderr) => {
+        console.error(stderr);
+        event.sender.send('get-drives:response', []);
+    });
+});
+
+ipcMain.on('get-path-content', (event, dir_array) => {
+    console.log(dir_array);
+
+    const dir_path = path.join(...dir_array);
+    console.log(dir_path);
+    fs.readdir(dir_path, (err, files) => {
+
+        const files_list = [];
+        files.forEach(file => {
+            const file_path = path.resolve(dir_path, file);
+            let stat;
+            try {
+                // ...because there might be locked files
+                stat = fs.statSync(file_path);
+            } catch (error) {}
+            if (stat && stat.isDirectory()) {
+                files_list.push({
+                    full_path: file_path,
+                    title: file,
+                    type: 'folder',
+                    stat: stat
+                });
+            } else if (stat) {
+                let ext = (file.lastIndexOf('.') < 0) ? '' : file.substr(file.lastIndexOf('.'));
+                if (['.jpg', '.jpeg', '.gif', '.png', '.gif', '.webm'].indexOf(ext.toLowerCase()) > -1) {
+                    files_list.push({
+                        full_path: file_path,
+                        title: file,
+                        type: 'file',
+                        stat: stat
+                    });
+                }
+            }
+        });
+        let sorted_list = [];
+        sorted_list = files_list.filter((x) => {
+            return x.type === 'folder';
+        });
+
+        files_list.filter((x) => {
+            return x.type === 'file';
+        }).forEach(x => {
+            sorted_list.push(x);
+        });
+
+        event.sender.send('get-path-content:response', sorted_list);
+    });
+    // event.sender.send('get-path-content:response', []);
+});

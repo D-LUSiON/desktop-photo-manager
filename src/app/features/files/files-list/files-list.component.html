@@ -1,0 +1,24 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="#">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="#">Library</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Data
+        </li>
+    </ol>
+</nav>
+<mat-grid-list [cols]="grid_cols" rowHeight="1:1">
+    <mat-grid-tile *ngFor="let dir_item of dir_content">
+        <mat-card *ngIf="dir_item.type === 'folder'" (dblclick)="openDir(dir_item)">
+            <mat-icon class="mat-icon-">folder</mat-icon>
+            {{ dir_item.title }}
+        </mat-card>
+        <mat-card *ngIf="dir_item.type === 'file'">
+            <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
+        </mat-card>
+    </mat-grid-tile>
+</mat-grid-list>

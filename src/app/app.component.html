@@ -1,29 +1,28 @@
 <app-titlebar>
     <ng-template #titlebar_buttons>
-        <div class="button go_back" (click)="onGoBack()">
+        <div class="button menu" (click)="onToggleMenu()">
+            <mat-icon>menu</mat-icon>
+        </div>
+        <div class="button go_back" (click)="onGoBack()" *ngIf="show_back">
             <img src="assets/arrow-go-back.svg" alt="">
         </div>
     </ng-template>
-    <ng-template #titlebar_title>Titlebar title that you can change</ng-template>
+    <ng-template #titlebar_title>Desktop Photo Manager v0.0.1</ng-template>
 </app-titlebar>
-<div style="margin-top: 50px;">
-    <h1>
-        {{title}}
-    </h1>
-    <div class="container">
-        <button (click)="onClickSync()" style="margin-right: 5px;">Click to send
-            <strong><u>syncronous</u> "ping"</strong> to Electron backend!</button>
-        <button (click)="onClickAsync()">Click to send
-            <strong><u>a-syncronous</u> "ping"</strong> to Electron backend!</button>
-    </div>
-    <div class="container">
-        <ul>
-            <li *ngFor="let message of messages">
-                <i [ngStyle]="{ 'margin-right': '5px' }">{{ message['time'] }}</i><strong class="{{ message['type'] }}">{{ message['type'] }} ({{ message['method'] }}):</strong> {{ message['text'] }}
-            </li>
-        </ul>
-    </div>
-    <div class="container">
-        <button (click)="onExitApp()">Exit application</button>
-    </div>
-</div>
+<mat-drawer-container autosize class="all-container">
+    <mat-drawer #sidebar mode="over">
+        <mat-list>
+            <ng-container *ngFor="let drive of drives">
+                <mat-list-item (click)="openDrive(drive); closeMenu();">
+                    <mat-icon matListIcon>keyboard_arrow_right</mat-icon>
+                    <h4 mat-line>{{ drive.mounted }} {{ drive.volume_label }}</h4>
+                    <p mat-line> {{ drive.capacity }} </p>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+            </ng-container>
+        </mat-list>
+    </mat-drawer>
+    <mat-drawer-content>
+        <router-outlet></router-outlet>
+    </mat-drawer-content>
+</mat-drawer-container>

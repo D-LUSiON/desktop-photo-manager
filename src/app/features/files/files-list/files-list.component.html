@@ -1,13 +1,16 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="#">Home</a>
-        </li>
-        <li class="breadcrumb-item">
-            <a href="#">Library</a>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page">
-            Data
+        <li
+            class="breadcrumb-item"
+            [class.active]="path.length === (i + 1)"
+            *ngFor="let breadcrumb of path; let i = index"
+        >
+            <a
+                href="#"
+                *ngIf="path.length > (i + 1); else breadcrumb_final"
+                (click)="goToPathElement(i)"
+            >{{ breadcrumb }}</a>
+            <ng-template #breadcrumb_final>{{ breadcrumb }}</ng-template>
         </li>
     </ol>
 </nav>

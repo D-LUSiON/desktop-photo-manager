@@ -8,7 +8,7 @@ export class FilesService {
 
     private _drives: Drive[] = [];
     private _current_drive: Drive = new Drive();
-    private _path: Array<string> = ['/'];
+    private _path: Array<string> = [];
     private _dir_content: Array<Folder | File> = [];
 
     loading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -30,7 +30,7 @@ export class FilesService {
         this.drive$.subscribe((drive: Drive) => {
             this._current_drive = drive;
             localStorage.setItem('last_drive', JSON.stringify(this._current_drive));
-            this._path = ['/'];
+            this._path = [];
             if (this.current_drive.mounted)
                 this.path$.next([this.current_drive.mounted, ...this.current_path]);
         });
@@ -57,6 +57,7 @@ export class FilesService {
                 if (!this.current_drive.mounted) {
                     this._current_drive = new Drive(this.drives[0]);
                     this.drive$.next(this.current_drive);
+
                 }
 
                 this.loading$.next(false);
@@ -68,7 +69,7 @@ export class FilesService {
 
     getPath(path: Array<string>): Observable<Array<Folder | File>> {
         return Observable.create((observer: Observer<Array<Folder | File>>) => {
-            // FIXME: There is the drive letter twice in the beginning of the string
+            if (path.length === 1) path = [...path, '/'];
             this._electronClient.send('get-path-content', path).subscribe(data => {
                 this._dir_content = data.map(x => {
                     if (x.type === 'folder')

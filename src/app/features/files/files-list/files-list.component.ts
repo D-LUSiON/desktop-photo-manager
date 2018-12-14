@@ -12,16 +12,20 @@ export class FilesListComponent implements OnInit, OnDestroy {
 
     grid_cols = 6;
 
+    path: Array<string> = [];
     dir_content: Array<Folder | File> = [];
 
+    path_subs: Subscription;
     dir_content_subs: Subscription;
 
     constructor(
         private _filesService: FilesService,
     ) {
-        this._filesService.path$.subscribe((path: Array<string>) => {
+        this.path_subs = this._filesService.path$.subscribe((path: Array<string>) => {
+            this.path = path;
 
         });
+
         this.dir_content_subs = this._filesService.dir_content$.subscribe((content: Array<Folder | File>) => {
             this.dir_content = content;
         });
@@ -34,7 +38,15 @@ export class FilesListComponent implements OnInit, OnDestroy {
         this._filesService.path$.next(dir_item.full_path);
     }
 
+    goToPathElement(idx: number) {
+        const path = this.path.slice(0, idx + 1);
+        console.log(idx, path);
+
+        this._filesService.path$.next(path);
+    }
+
     ngOnDestroy() {
+        this.path_subs.unsubscribe();
         this.dir_content_subs.unsubscribe();
     }
 

@@ -9,7 +9,6 @@ import { TitlebarComponent } from './titlebar/titlebar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CoreModule } from './core';
 import { SharedModule } from './shared/shared.module';
-import { ScrollingModule } from '@angular/cdk/scrolling';
 
 
 @NgModule({
@@ -18,7 +17,6 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
         BrowserAnimationsModule,
         AppRoutingModule,
         NgxElectronModule,
-        ScrollingModule,
         CoreModule,
         SharedModule,
     ],

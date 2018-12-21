@@ -162,10 +162,9 @@ ipcMain.on('get-drives', (event) => {
 });
 
 ipcMain.on('get-path-content', (event, dir_array) => {
-    console.log(dir_array);
     if (dir_array[dir_array.length - 1] === '') dir_array[dir_array.length - 1] = '/';
     const dir_path = path.join(...dir_array);
-    console.log(dir_path);
+    console.log(`Loading "${dir_path}" contents...`);
     fs.readdir(dir_path, (err, files) => {
 
         const files_list = [];

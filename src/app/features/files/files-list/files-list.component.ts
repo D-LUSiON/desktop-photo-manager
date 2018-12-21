@@ -34,14 +34,23 @@ export class FilesListComponent implements OnInit, OnDestroy {
     ngOnInit() {
     }
 
+    goUp() {
+        if (this.path.length > 1) {
+            this.path.pop();
+            this._filesService.path$.next(this.path);
+        }
+    }
+
     openDir(dir_item: Folder) {
         this._filesService.path$.next(dir_item.full_path);
     }
 
+    openItem(dir_item: File)  {
+        console.log(dir_item);
+    }
+
     goToPathElement(idx: number) {
         const path = this.path.slice(0, idx + 1);
-        console.log(idx, path);
-
         this._filesService.path$.next(path);
     }
 

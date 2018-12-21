@@ -14,14 +14,46 @@
         </li>
     </ol>
 </nav>
-<mat-grid-list [cols]="grid_cols" rowHeight="1:1">
-    <mat-grid-tile *ngFor="let dir_item of dir_content">
-        <mat-card *ngIf="dir_item.type === 'folder'" (dblclick)="openDir(dir_item)">
+
+<div
+    virtualScroller
+    #scroll
+    class="grid"
+    [items]="dir_content"
+    (vsUpdate)="viewPortItems = $event"
+>
+    <div class="grid-item" *ngIf="path.length > 1">
+        <mat-card (dblclick)="goUp()">
+            <mat-icon class="mat-icon-">keyboard_arrow_up</mat-icon>
+            ..
+        </mat-card>
+    </div>
+    <div
+        class="grid-item"
+        *ngFor="let dir_item of viewPortItems"
+    >
+        <div class="grid-item-content" *ngIf="dir_item.type === 'folder'" (dblclick)="openDir(dir_item)">
             <mat-icon class="mat-icon-">folder</mat-icon>
             {{ dir_item.title }}
-        </mat-card>
-        <mat-card *ngIf="dir_item.type === 'file'">
-            <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
-        </mat-card>
-    </mat-grid-tile>
-</mat-grid-list>
+        </div>
+        <div
+            class="grid-item-content"
+            *ngIf="dir_item.type === 'file'"
+            (dblclick)="openItem(dir_item)"
+            [ngStyle]="{ 'background-image': 'url(' + (dir_item.thumb|async) + ')'}"
+        >
+            <div class="grid-item-select">
+                <mat-checkbox
+                    [checked]="true"
+                ></mat-checkbox>
+            </div>
+            <div class="grid-item-title">
+                {{ dir_item.title }}
+            </div>
+        </div>
+        <!-- <mat-card *ngIf="dir_item.type === 'file'">
+            <img mat-card-image [src]="dir_item.thumb|async" alt="{{ dir_item.title }}">
+        </mat-card> -->
+    </div>
+</div>
+<app-file-preview></app-file-preview>

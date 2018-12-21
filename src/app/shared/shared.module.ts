@@ -11,6 +11,7 @@ import {
     MatListModule,
     MatGridListModule
 } from '@angular/material';
+import { VirtualScrollerModule } from 'ngx-virtual-scroller';
 
 @NgModule({
     imports: [
@@ -22,6 +23,7 @@ import {
         MatSidenavModule,
         MatListModule,
         MatGridListModule,
+        VirtualScrollerModule
     ],
     exports: [
         MatCardModule,
@@ -32,6 +34,7 @@ import {
         MatSidenavModule,
         MatListModule,
         MatGridListModule,
+        VirtualScrollerModule
     ],
     declarations: [],
 })

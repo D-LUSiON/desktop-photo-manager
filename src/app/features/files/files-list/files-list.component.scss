@@ -1,14 +1,16 @@
-.mat-grid-tile {
-    .mat-card {
-        width: 100%;
-        height: 100%;
-
-        .mat-icon {
-            display: block;
+.mat-grid-list {
+    .mat-grid-tile {
+        .mat-card {
             width: 100%;
-            height: auto;
-            text-align: center;
-            padding: 1em;
+            height: 100%;
+
+            .mat-icon {
+                display: block;
+                width: 100%;
+                height: auto;
+                text-align: center;
+                padding: 1em;
+            }
         }
     }
 }
